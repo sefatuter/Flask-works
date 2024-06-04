@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Conference System</title>
+{% endblock %}
+
+{% block body %}
+
+<div class="content">
+    <h1>Audience List</h1>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Action</th>
+        </tr>
+        {% for p in persons %}
+            <tr>
+                <td>{{ p.name }}</td>
+                <td>{{ p.surname }}</td>
+                <td>{{ p.date_created.date() }}</td>
+                <td>
+                    <a href="">Delete</a>
+                    <br>
+                    <a href="">Add</a>
+                </td>
+            </tr>
+            {% endfor %}
+    </table>
+
+    <form action="/" method="POST">
+        <input type="text" name="name" id="name" placeholder="Name">
+        <input type="text" name="surname" id="surname" placeholder="Surname">
+        <input type="submit" value="Add Person">
+    </form>
+</div>
+
+{% endblock %}
