@@ -34,8 +34,19 @@ def index():
 def user(name): # passing name from above
     return render_template("user.html", user_name=name)
 
-
 # my tries
 # @app.route('/user/<user>/<system>')
 # def save(user, system):
 #     return f"<h1>Hello {user}, welcome to the {system}."
+
+# Create Custom Error Pages
+
+#1-Invalid URL
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+#2-Internal Server Error
+@app.errorhandler(500)
+def page_not_found(e):
+    return render_template("500.html"), 500
