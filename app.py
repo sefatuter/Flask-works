@@ -1,44 +1,41 @@
-from flask import Flask, render_template, url_for, request, redirect
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from flask import Flask, render_template
 
+#Creating flask instance
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///audience.db'
-db = SQLAlchemy(app)
 
-class AudienceDB(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(200),nullable = False)
-    surname = db.Column(db.String(200),nullable = False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+# Creating a route decorator
+# @app.route('/')
+# def index():
+#     return '<h1>Hello World</h1>'
 
-    def __repr__(self):
-        return f'<AudienceDB {self.name} {self.surname}>'
+# FILTERS!!!
+# safe
+# capitalize
+# lower
+# upper
+# title
+# trim
+# striptags
 
-with app.app_context():
-    db.create_all()
-
-@app.route('/', methods = ['POST', 'GET'])
+@app.route('/')
 def index():
-    if request.method == 'POST':
-        # return 'Hi'
-        name = request.form['name']
-        surname = request.form['surname']
-        new_person = AudienceDB(name=name, surname=surname)
-        
-        try:
-            db.session.add(new_person)
-            db.session.commit()
-            return redirect('/')
-        except:
-            return 'There was an issue adding person.'
-            
-    else:
-        persons = AudienceDB.query.order_by(AudienceDB.date_created).all()
-        return render_template('index.html', persons=persons)
+    first_name = "john"
+    # stuff = "this is <strong>Bold</strong> text"
+    stuff = "This is bold text"
+    favorite_pizza = ["Pepperoni", "Margarita", "Cheese", 41]
+    return render_template("index.html",
+                           first_name=first_name,
+                           stuff=stuff,
+                           favorite_pizza=favorite_pizza)
+
+#localhost:5000/user/john
+@app.route('/user/<name>')
+def user(name): # passing name from above
+    return render_template("user.html", user_name=name)
 
 
-
-if __name__ == "__main__":
-    app.run(debug=True)
+# my tries
+# @app.route('/user/<user>/<system>')
+# def save(user, system):
+#     return f"<h1>Hello {user}, welcome to the {system}."

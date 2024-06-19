@@ -1,39 +1,25 @@
-{% extends 'base.html' %}
+<h1>Hello world</h1>
+<h2>This is my first flask app</h2>
+<p>My name is {{ first_name  }}</p>
+<p>{{ stuff }}</p>
+<p>{{ stuff|safe }}</p>
+<p>{{ stuff|striptags }}</p> <!-- removes html codes -->
+<p>{{ stuff|title }}</p> <!--  Every word starts upper -->
+<br>
+<h3>Favorite Pizzas:</h3>
+<!-- <p>{{ favorite_pizza[0] }}</p> -->
 
-{% block head %}
-<title>Conference System</title>
-{% endblock %}
+{% for topping in favorite_pizza %}
+    {% if topping == 41 %}
+     {{ topping + 100 }} <br>
+    {% else %}
+     {{ topping }} <br>
+    {% endif %}
 
-{% block body %}
+{% endfor %}
 
-<div class="content">
-    <h1>Audience List</h1>
+<br>
 
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Action</th>
-        </tr>
-        {% for p in persons %}
-            <tr>
-                <td>{{ p.name }}</td>
-                <td>{{ p.surname }}</td>
-                <td>{{ p.date_created.date() }}</td>
-                <td>
-                    <a href="">Delete</a>
-                    <br>
-                    <a href="">Add</a>
-                </td>
-            </tr>
-            {% endfor %}
-    </table>
+{{ favorite_pizza.0 }}
 
-    <form action="/" method="POST">
-        <input type="text" name="name" id="name" placeholder="Name">
-        <input type="text" name="surname" id="surname" placeholder="Surname">
-        <input type="submit" value="Add Person">
-    </form>
-</div>
 
-{% endblock %}
