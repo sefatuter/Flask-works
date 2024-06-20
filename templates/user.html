@@ -1,4 +1,7 @@
-<!-- <h1>hello {{ user_name|lower}}</h1> -->
-<!-- <h1>hello {{ user_name|upper}}</h1> -->
+{% extends 'base.html' %}
 
-<h1>hello {{ user_name|lower}}</h1>
+{% block content %}
+
+    <h1>Hello {{ user_name|title}}</h1>
+
+{% endblock content %}
