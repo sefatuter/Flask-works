@@ -2,6 +2,7 @@
 
 {% block content %}
 
+<!-- dont forget to put for loop -->
 {% for message in get_flashed_messages() %}
 
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -10,9 +11,6 @@
         </div>
 
 {% endfor %}
-
-
-
 
 {% if name %}
     <h1>Hello {{ name }}!</h1>

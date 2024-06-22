@@ -18,5 +18,6 @@ $ flask run --debug
 
 creating db in bash :
 
+$ flask shell
 >>> from app import db
 >>> db.create_all()

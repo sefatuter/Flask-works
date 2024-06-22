@@ -11,9 +11,8 @@
 
 {% endfor %}
 
-
 {% if name %}
-    <h1>User Added! </h1>
+    <h1>Update User </h1>
     <br/>
     
     <table class="table">
@@ -31,12 +30,11 @@
             {% for our_user in our_users %}
                 <tr>
                     <th scope="row">{{ our_user.id }}</th>
-                    <th scope="row">{{ our_user.name }}</th>
-                    <th scope="row"><a href="{{ url_for('update', id=our_user.id) }}"></a></th>
+                    <th scope="row">{{ our_user.name  }} </th>
                     <th scope="row">{{ our_user.email }}</th>
                     <th scope="row">{{ our_user.favorite_color }}</th>
                     <th scope="row">{{ our_user.date_added }}</th>
-                    <th><a href="{{ url_for('delete', id=our_user.id) }}">Delete</a></th>
+    
                 </tr>
             {% endfor %}
             </tbody>
@@ -44,63 +42,38 @@
 
 
 {% else %}
-    <h1>Userlist :</h1>
+    <h1>Update User</h1>
     <br>
     <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-        <form method="post">
+        <form method="post" action="/update/{{ name_to_update.id }}">
             {{ form.hidden_tag() }}
 
             {{ form.name.label(class="form-label") }}
 
-            {{ form.name(class="form-control") }}
+            {{ form.name(class="form-control", value=name_to_update.name) }}
             <br/>
 
             {{ form.email.label(class="form-label") }}
 
-            {{ form.email(class="form-control") }}
+            {{ form.email(class="form-control", value=name_to_update.email) }}
             
             <br>
             <br/>
 
             {{ form.favorite_color.label(class="form-label") }}
 
-            {{ form.favorite_color(class="form-control") }}
-
+            {{ form.favorite_color(class="form-control", value=name_to_update.favorite_color) }}
+            
             <br>
             {{ form.submit(
                 class="btn btn-secondary") }}
+            
+            <a href="{{ url_for('delete', id=id) }}" class="btn btn-danger" >Delete</a>
 
         </form>
     </div>
 
     <br/><br/><br/>
-
-    <table class="table">
-    <thead>
-        <tr>
-            <td>
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Favorite Color</th>
-                <th scope="col">Date Added</th>
-            </td>
-        </tr>
-    </thead>
-    <tbody>
-        {% for our_user in our_users %}
-            <tr>
-              <th scope="row">{{ our_user.id }}</th>
-              <th scope="row"><a href="{{ url_for('update', id=our_user.id) }}">{{ our_user.name  }}</a></th>
-              <th scope="row">{{ our_user.email }}</th>
-              <th scope="row">{{ our_user.favorite_color }}</th>
-              <th scope="row">{{ our_user.date_added }}</th>
-              <th><a href="{{ url_for('delete', id=our_user.id) }}">Delete</a></th>
-
-            </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-   
 
 {% endif %}
 
