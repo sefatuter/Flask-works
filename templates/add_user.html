@@ -20,6 +20,7 @@
         <thead>
             <tr>
                 <td>
+                    <th scope="col">Username</th>
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Favorite Color</th>
@@ -56,6 +57,11 @@
             
             <br>
 
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-control") }}
+
+            <br>
+
             {{ form.email.label(class="form-label") }}
             {{ form.email(class="form-control") }}
             
@@ -89,6 +95,7 @@
         <tr>
             <td>
                 <th scope="col">Name</th>
+                <th scope="col">Username</th>
                 <th scope="col">Email</th>
                 <th scope="col">Favorite Color</th>
                 <th scope="col">Date Added</th>
@@ -100,6 +107,7 @@
             <tr>
               <th scope="row">{{ our_user.id }}</th>
               <th scope="row"><a href="{{ url_for('update', id=our_user.id) }}">{{ our_user.name  }}</a></th>
+              <th scope="row">{{ our_user.username }}</th>
               <th scope="row">{{ our_user.email }}</th>
               <th scope="row">{{ our_user.favorite_color }}</th>
               <th scope="row">{{ our_user.date_added }}</th>
@@ -110,9 +118,10 @@
         {% endfor %}
         </tbody>
       </table>
-   
 
 {% endif %}
+
+<br><br><br>
 
 {% endblock content %}
 
