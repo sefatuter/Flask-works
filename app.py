@@ -73,10 +73,10 @@ def posts():
     return render_template("posts.html", posts=posts)
 
 
-
-
-
-
+@app.route('/post/<int:id>')
+def post(id):
+    post = Posts.query.get_or_404(id)
+    return render_template("post.html", post=post)
 
 
 
