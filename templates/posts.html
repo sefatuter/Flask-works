@@ -24,6 +24,7 @@
       <span>Slug ->{{ post.slug }}</span>
       <p class="card-text"> {{ post.content }} </p>
       <a href="{{ url_for('post', id=post.id) }}" class="btn btn-outline-secondary btn-sm">View more</a> 
+      <a href="{{ url_for('delete_post', id=post.id) }}" class="btn btn-outline-danger btn-sm">Delete Post</a> 
       <a href="{{ url_for('edit_post', id=post.id) }}" class="btn btn-outline-warning btn-sm">Edit Post</a> 
       <br/><br>
       <p class="card-text"><small class="text-body-secondary">{{ post.date_posted }}</small></p>
