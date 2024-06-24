@@ -40,6 +40,12 @@ migrate = Migrate(app, db)
 # $ flask db migrate -m "message"
 # $ flask db upgrade
 
+
+# if changes made in another computer use:
+# $ flask db stamp head
+# $ flask db migrate
+# $ flask db upgrade
+
 # Create a Blog Post Model
 class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -57,6 +63,22 @@ class PostForm(FlaskForm):
     author = StringField("Author", validators=[DataRequired()])
     slug = StringField("Slug", validators=[DataRequired()])
     submit = SubmitField("Submit")
+
+
+@app.route('/posts')
+def posts():
+    # Take all the posts from database
+    
+    posts = Posts.query.order_by(Posts.date_posted)
+    return render_template("posts.html", posts=posts)
+
+
+
+
+
+
+
+
 
 # Add Post Page
 
