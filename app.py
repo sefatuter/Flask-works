@@ -226,6 +226,8 @@ def add_post():
         # Redirect to website
     return render_template("add_post.html", form=form)
 
+
+
 # JSON
 
 @app.route('/date')
