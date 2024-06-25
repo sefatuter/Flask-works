@@ -11,6 +11,7 @@
 
 {% endfor %}
 
+{% if current_user.is_authenticated %}
 
 <h1>Add Blog Post...</h1>
     <br>
@@ -45,5 +46,12 @@
 
     <br/><br/><br/>
 
+{% else %}
+
+<h2>Must Be Logged In...</h2>
+<p>Sorry, You must be logged in to access this page!</p>
+<a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-sm" style="text-decoration: none;">Login Here</a>
+
+{% endif %}
 
 {% endblock %}

@@ -164,6 +164,7 @@ def delete_post(id):
 # Edit post
 
 @app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
 def edit_post(id):
     post = Posts.query.get_or_404(id)
     form = PostForm()
@@ -200,6 +201,7 @@ def post(id):
 # Add Post Page
 
 @app.route('/add-post', methods=['GET', 'POST'])
+# @login_required # Second way to do  is go to add_post.html
 def add_post():
     form = PostForm()
     
