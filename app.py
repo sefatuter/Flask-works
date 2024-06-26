@@ -1,7 +1,4 @@
 from flask import Flask, render_template, flash, request, redirect, url_for
-from flask_wtf import FlaskForm # pip install flask_wtf
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
-from wtforms.validators import DataRequired, EqualTo, Length
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user # pip install flask_login
 
@@ -9,7 +6,8 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-from wtforms.widgets import TextArea
+from webforms import LoginForm, PostForm, PasswordForm, NameForm, UserForm
+
 #Creating flask instance
 app = Flask(__name__)
 
@@ -58,14 +56,6 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return Users.query.get(int(user_id))
 
-
-# Create Login Form
-
-class LoginForm(FlaskForm):
-    username = StringField("Username", validators=[DataRequired()])
-    password = PasswordField("Password", validators=[DataRequired()])
-    submit = SubmitField("Submit")
-
 # Create Login Page
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -96,8 +86,7 @@ def logout():
     logout_user()
     flash("You Have Been Logged Out!!")
     return redirect(url_for('login'))
-
-
+ 
 
 # Create Dashboard Page
 
@@ -134,23 +123,7 @@ def dashboard():
                 name_to_update=name_to_update,
                 id=id)
         
-# Create a Blog Post Model
-class Posts(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255))
-    content = db.Column(db.Text)
-    author = db.Column(db.String(255))
-    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
-    slug = db.Column(db.String(255))
 
-# Create a Post Form
-
-class PostForm(FlaskForm):
-    title = StringField("Title", validators=[DataRequired()])
-    content = StringField("Content", validators=[DataRequired()], widget=TextArea())
-    author = StringField("Author", validators=[DataRequired()])
-    slug = StringField("Slug", validators=[DataRequired()])
-    submit = SubmitField("Submit")
 
 
 @app.route('/posts')
@@ -186,7 +159,6 @@ def delete_post(id):
         # Grab all the posts from the database
         posts = Posts.query.order_by(Posts.date_posted)
         return render_template("posts.html", posts=posts)
-
 
 
 # Edit post
@@ -257,7 +229,6 @@ def add_post():
     return render_template("add_post.html", form=form)
 
 
-
 # JSON
 
 @app.route('/date')
@@ -271,83 +242,10 @@ def get_current_date():
     # return {"Date": datetime.date.today()}
 
 
-
-
-
-
-# Create Model
-class Users(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(20), nullable=False, unique=True) # flask db migrate -m "added username", flask db  upgrade
-    name = db.Column(db.String(200), nullable=False)
-    email = db.Column(db.String(120), nullable=False, unique=True)
-    favorite_color = db.Column(db.String(120))
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Do password
-    password_hash = db.Column(db.String(128))
-    
-    @property
-    def password(self):
-        raise AttributeError('Password is a not readable attribute!')
-    
-    @password.setter
-    def password(self, password):
-        self.password_hash = generate_password_hash(password)
-        
-    def verify_password(self, password):
-        return check_password_hash(self.password_hash, password)
-    
-    # $ flask shell
-    # >>> from app import Users
-    # >>> u = Users()
-    # >>> u.password = 'cat'
-    # >>> u.password
-    # Traceback (most recent call last):
-    #   File "<console>", line 1, in <module>
-    #   File "/Users/afnesia/Desktop/GitHub/Flask-works/app.py", line 55, in password
-    #     raise AttributeError('Password is a not readable attribute!')
-    # AttributeError: Password is a not readable attribute!
-    # >>> u.password_hash
-    # 'pbkdf2:sha256:260000$7pTAAEhwrkrj3Ive$d3c72e04fd3cf56faea7276686407a7ab4150353e7e8cde0953936eecedee268'
-    # >>> u.verify_password('cat)
-    # True
-    # >>> u.verify_password('dog')
-    # False
-    
-    # >>> u2 = Users()
-    # >>> u2.password = 'cat'
-    # >>> u2.password_hash
-    # 'pbkdf2:sha256:260000$G6dAVnLD92bn1V9S$0740c4598b58354a7eccf1cd6fa9236b2a6e2c36c0b57008d8a14665e2689791'
-    
-    # We need to make migration
-    
-    # Create A string
-    def __repr__(self):
-        return '<Name %r>' % self.name
-
 with app.app_context():
     db.create_all()
 
-# Create a Form Class
-class PasswordForm(FlaskForm):
-    email = StringField("Enter Email: ", validators=[DataRequired()])
-    password_hash = PasswordField("Enter Password: ", validators=[DataRequired()])
-    submit = SubmitField("Submit")
 
-class NameForm(FlaskForm):
-    name = StringField("Enter Name: ", validators=[DataRequired()])
-    submit = SubmitField("Submit")
-
-class UserForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])
-    username = StringField("Username", validators=[DataRequired()])
-    email = StringField("Email", validators=[DataRequired()])
-    favorite_color = StringField("Favorite Color")
-    password_hash = PasswordField("Password", validators=[DataRequired(), EqualTo('password_hash2', message="Passwords must match!")])
-    password_hash2 = PasswordField("Confirm Password", validators=[DataRequired()])
-    submit = SubmitField("Submit")
-    
 
 @app.route("/delete/<int:id>", methods=['GET', 'POST'])
 def delete(id):
@@ -376,6 +274,7 @@ def delete(id):
     
 # Update Database Record
 @app.route("/update/<int:id>", methods=['GET', 'POST'])
+@login_required
 def update(id):
     form = UserForm()
     name_to_update = Users.query.get_or_404(id)
@@ -518,7 +417,69 @@ def name():
     return render_template("name.html",
         name=name,
         form=form)
+    
+    
 
+# Create a Blog Post Model
+class Posts(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    content = db.Column(db.Text)
+    author = db.Column(db.String(255))
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    slug = db.Column(db.String(255))
+    
+
+# Create Model
+class Users(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(20), nullable=False, unique=True) # flask db migrate -m "added username", flask db  upgrade
+    name = db.Column(db.String(200), nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True)
+    favorite_color = db.Column(db.String(120))
+    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Do password
+    password_hash = db.Column(db.String(128))
+    
+    @property
+    def password(self):
+        raise AttributeError('Password is a not readable attribute!')
+    
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+        
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+    
+    # $ flask shell
+    # >>> from app import Users
+    # >>> u = Users()
+    # >>> u.password = 'cat'
+    # >>> u.password
+    # Traceback (most recent call last):
+    #   File "<console>", line 1, in <module>
+    #   File "/Users/afnesia/Desktop/GitHub/Flask-works/app.py", line 55, in password
+    #     raise AttributeError('Password is a not readable attribute!')
+    # AttributeError: Password is a not readable attribute!
+    # >>> u.password_hash
+    # 'pbkdf2:sha256:260000$7pTAAEhwrkrj3Ive$d3c72e04fd3cf56faea7276686407a7ab4150353e7e8cde0953936eecedee268'
+    # >>> u.verify_password('cat)
+    # True
+    # >>> u.verify_password('dog')
+    # False
+    
+    # >>> u2 = Users()
+    # >>> u2.password = 'cat'
+    # >>> u2.password_hash
+    # 'pbkdf2:sha256:260000$G6dAVnLD92bn1V9S$0740c4598b58354a7eccf1cd6fa9236b2a6e2c36c0b57008d8a14665e2689791'
+    
+    # We need to make migration
+    
+    # Create A string
+    def __repr__(self):
+        return '<Name %r>' % self.name
 
 
 if __name__ == "__main__":
