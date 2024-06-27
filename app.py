@@ -137,28 +137,38 @@ def posts():
 # Delete post
 
 @app.route('/posts/delete/<int:id>')
+@login_required
 def delete_post(id):
     post_to_delete = Posts.query.get_or_404(id)
+    id = current_user.id
     
-    try:
-        db.session.delete(post_to_delete)
-        db.session.commit()
+    if id == post_to_delete.poster.id:    
+        try:
+            db.session.delete(post_to_delete)
+            db.session.commit()
 
-        # Message
-        flash('Blog Post Has Been Deleted!')
+            # Message
+            flash('Blog Post Has Been Deleted!')
+            
+            # Take all the posts from database
         
-        # Take all the posts from database
-    
+            posts = Posts.query.order_by(Posts.date_posted)
+            return render_template("posts.html", posts=posts)
+
+        except:
+            # Error message
+            flash("There was a problem while deleting..")
+            
+            # Grab all the posts from the database
+            posts = Posts.query.order_by(Posts.date_posted)
+            return render_template("posts.html", posts=posts)
+
+    else:
+        flash("You Aren't Authorized To Delete!", "warning")
+        
         posts = Posts.query.order_by(Posts.date_posted)
         return render_template("posts.html", posts=posts)
 
-    except:
-        # Error message
-        flash("There was a problem while deleting..")
-        
-        # Grab all the posts from the database
-        posts = Posts.query.order_by(Posts.date_posted)
-        return render_template("posts.html", posts=posts)
 
 
 # Edit post
@@ -172,7 +182,7 @@ def edit_post(id):
     if form.validate_on_submit():        
         post.title=form.title.data,
         post.content=form.content.data,
-        post.author=form.author.data,
+        # post.author=form.author.data,
         post.slug=form.slug.data
 
         # Update database
@@ -185,7 +195,7 @@ def edit_post(id):
     # Putting previous data to see in the form before change
     form.title.data = post.title
     form.content.data = post.content
-    form.author.data = post.author
+    # form.author.data = post.author
     form.slug.data = post.slug
     return render_template('edit_post.html', form=form)
     
@@ -206,17 +216,18 @@ def add_post():
     form = PostForm()
     
     if form.validate_on_submit():
+        poster = current_user.id
         post = Posts(
             title=form.title.data,
             content=form.content.data,
-            author=form.author.data,
+            poster_id=poster,
             slug=form.slug.data)
         
         # After clear the form
         
         form.title.data = ''
         form.content.data = ''
-        form.author.data = ''
+        # form.author.data = ''
         form.slug.data = ''
         
         # Add post to database
@@ -425,9 +436,14 @@ class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
     content = db.Column(db.Text)
-    author = db.Column(db.String(255))
+    # author = db.Column(db.String(255))
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
     slug = db.Column(db.String(255))
+   
+    # Foreign Key to Link Users (refer to primary key of the user)
+
+    poster_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
     
 
 # Create Model
@@ -441,6 +457,9 @@ class Users(db.Model, UserMixin):
     
     # Do password
     password_hash = db.Column(db.String(128))
+    
+    # User Can Have Many Posts
+    posts = db.relationship('Posts', backref='poster') # flask db migrate -m 'add foreign key' # flask db upgrade
     
     @property
     def password(self):

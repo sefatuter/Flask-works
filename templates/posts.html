@@ -4,7 +4,7 @@
 
 {% for message in get_flashed_messages() %}
 
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
         {{ message }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -20,7 +20,7 @@
 <div class="card" id="cardIndex">
     <div class="card-body">
       <h5 class="card-title">Title: <a href="{{ url_for('post', id=post.id) }}" style="text-decoration: none;">{{ post.title }}</a></h5>
-      <h6>Author: {{ post.author }}</h6>
+      <h6>Author: {{ post.poster.name }}</h6>
       <span>Slug ->{{ post.slug }}</span>
       <p class="card-text"> {{ post.content }} </p>
       <a href="{{ url_for('post', id=post.id) }}" class="btn btn-outline-secondary btn-sm">View more</a> 
