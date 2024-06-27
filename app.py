@@ -178,7 +178,7 @@ def delete_post(id):
 def edit_post(id):
     post = Posts.query.get_or_404(id)
     form = PostForm()
-
+    
     if form.validate_on_submit():        
         post.title=form.title.data,
         post.content=form.content.data,
@@ -192,12 +192,17 @@ def edit_post(id):
         flash("Post Has Been Updated!")
         return redirect(url_for('post', id=post.id))
 
-    # Putting previous data to see in the form before change
-    form.title.data = post.title
-    form.content.data = post.content
-    # form.author.data = post.author
-    form.slug.data = post.slug
-    return render_template('edit_post.html', form=form)
+    if current_user.id == post.poster_id:
+        # Putting previous data to see in the form before change
+        form.title.data = post.title
+        form.content.data = post.content
+        # form.author.data = post.author
+        form.slug.data = post.slug
+        return render_template('edit_post.html', form=form)
+    else:
+        flash("You Aren't Authorized To Access This Page")
+        posts = Posts.query.order_by(Posts.date_posted)
+        return render_template("posts.html", posts=posts)
     
 
 # individual blog page
