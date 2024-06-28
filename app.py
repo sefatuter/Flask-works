@@ -82,13 +82,6 @@ def search():
             searched=post.searched,
             posts=posts)
 
-
-
-
-
-
-
-
 # Flask Login Stuff
 
 login_manager = LoginManager()
@@ -396,8 +389,20 @@ def add_user():
         our_users=our_users)
     
     
-    
-    
+# Admin Page
+
+@app.route('/admin')
+@login_required
+def admin():
+    id = current_user.id
+    if id == 1:
+        return render_template("admin.html")
+    else:
+        flash("Sorry You Must Be The Admin To Access This Page.")
+        return redirect(url_for('dashboard'))
+
+# Home Page    
+
 @app.route('/')
 def index():
     first_name = "john"
