@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-from webforms import LoginForm, PostForm, PasswordForm, NameForm, UserForm
+from webforms import LoginForm, PostForm, PasswordForm, NameForm, UserForm, SearchForm
 
 #Creating flask instance
 app = Flask(__name__)
@@ -44,6 +44,40 @@ migrate = Migrate(app, db)
 # $ flask db stamp head
 # $ flask db migrate
 # $ flask db upgrade
+
+
+# Pass Stuff To Navbar
+
+@app.context_processor
+def base():
+    form = SearchForm() # Now this search form passed into base.html so navbar includes 
+    return dict(form=form)
+
+
+# Create Search Function
+
+@app.route('/search', methods=['POST'])
+def search():
+    form = SearchForm()
+    posts = Posts.query # Searching content inside posts
+    if form.validate_on_submit():
+        # Get data from submitted form
+        post.searched = form.searched.data
+        # Query the database
+        posts = posts.filter(Posts.content.like('%' + post.searched + '%'))
+        posts = posts.order_by(Posts.title).all()
+        
+        
+        return render_template('search.html', 
+            form=form,
+            searched=post.searched,
+            posts=posts)
+
+
+
+
+
+
 
 
 # Flask Login Stuff

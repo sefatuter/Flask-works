@@ -4,6 +4,13 @@ from wtforms.validators import DataRequired, EqualTo, Length
 from wtforms.widgets import TextArea
 
 
+
+# Create A Search Form
+class SearchForm(FlaskForm):
+    searched = StringField("Searched", validators=[DataRequired()]) # In navbar we call this name="searched" so this is why we say searched
+    submit = SubmitField("Submit")
+    
+
 # Create Login Form
 
 class LoginForm(FlaskForm):
