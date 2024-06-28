@@ -8,8 +8,12 @@ from datetime import datetime
 
 from webforms import LoginForm, PostForm, PasswordForm, NameForm, UserForm, SearchForm
 
+from flask_ckeditor import CKEditor # pip install flask-ckeditor
+
 #Creating flask instance
 app = Flask(__name__)
+
+
 
 # Add NoSql Database - old db
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -21,6 +25,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:mysql1234@localhos
 
 # Secret Key
 app.config['SECRET_KEY'] = "super secret key"
+
+
+# Add ckeditor
+ckeditor = CKEditor(app)
+
 
 # Initialize Database
 
