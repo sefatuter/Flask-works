@@ -1,22 +1,57 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
 
-{% block content %}
+<br />
+<h2>You Searched For: <em>{{ searched }}</em></h2>
+<br />
 
+{% if posts %} {% for post in posts %}
 
-<br>
-<h2>You Searched For ...</h2>
-<p>{{ searched }}</p>
-<br>
+<div class="card" id="cardIndex">
+  <div class="card-body">
+    <h5 class="card-title">
+      Title:
+      <a href="{{ url_for('post', id=post.id) }}" style="text-decoration: none"
+        >{{ post.title }}</a
+      >
+    </h5>
+    <h6>Author: {{ post.poster.name }}</h6>
+    <span>Slug ->{{ post.slug }}</span>
+    <p class="card-text">{{ post.content|safe }}</p>
+    <a
+      href="{{ url_for('post', id=post.id) }}"
+      class="btn btn-outline-secondary btn-sm"
+      >View more</a
+    >
 
-{% for post in posts %}
-      <a href="{{ url_for('post', id=post.id) }}" style="text-decoration: none;">{{ post.title }}</a>
-    <br>
+    {% if post.poster_id == current_user.id %}
 
+    <a
+      href="{{ url_for('delete_post', id=post.id) }}"
+      class="btn btn-outline-danger btn-sm"
+      >Delete Post</a
+    >
+    <a
+      href="{{ url_for('edit_post', id=post.id) }}"
+      class="btn btn-outline-warning btn-sm"
+      >Edit Post</a
+    >
+    <br /><br />
 
+    {% endif %}
+
+    <p class="card-text">
+      <small class="text-body-secondary">{{ post.date_posted }}</small>
+    </p>
+  </div>
+</div>
+<br />
+<br />
 
 {% endfor %}
 
+{% else %} Sorry,your search term:
+<strong>{{ searched }}</strong> was not found...
+
+{% endif %}
 
 {% endblock content %}
-
-

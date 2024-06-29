@@ -10,6 +10,10 @@ from webforms import LoginForm, PostForm, PasswordForm, NameForm, UserForm, Sear
 
 from flask_ckeditor import CKEditor # pip install flask-ckeditor
 
+from werkzeug.utils import secure_filename
+import uuid as uuid
+import os
+
 #Creating flask instance
 app = Flask(__name__)
 
@@ -26,6 +30,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:mysql1234@localhos
 # Secret Key
 app.config['SECRET_KEY'] = "super secret key"
 
+# Upload Image
+UPLOAD_FOLDER = 'static/images/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Add ckeditor
 ckeditor = CKEditor(app)
@@ -137,10 +144,26 @@ def dashboard():
         name_to_update.name = request.form['name']
         name_to_update.email = request.form['email']
         name_to_update.favorite_color = request.form['favorite_color']
+        name_to_update.about_author = request.form['about_author']
         name_to_update.username = request.form['username']
+        name_to_update.profile_pic = request.files['profile_pic']
         
+
+        
+        #Grab image name
+        pic_filename = secure_filename(name_to_update.profile_pic.filename)
+        
+        # Set UUID
+        pic_name = str(uuid.uuid1()) + "_" + pic_filename # Creating Unique filename
+        
+        # Save The Image
+        saver = request.files['profile_pic']
+        
+        # Change it to a string to save to database
+        name_to_update.profile_pic = pic_name
         try:
             db.session.commit()
+            saver.save(os.path.join(app.config['UPLOAD_FOLDER']), pic_name)    
             flash("User Updated Successfully!")
 
             return render_template("dashboard.html", 
@@ -506,6 +529,8 @@ class Users(db.Model, UserMixin):
     name = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     favorite_color = db.Column(db.String(120))
+    about_author = db.Column(db.Text(500), nullable=True) # Added About Author Section // Add TextAreaField // Made a changes in database need to make migration
+    profile_pic = db.Column(db.String(120), nullable=True)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Do password
