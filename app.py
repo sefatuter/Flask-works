@@ -24,8 +24,9 @@ app = Flask(__name__)
 
 # MySql Database
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://username:password@localhost/db_name'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:mysql1234@localhost/our_users' # pip install pymsysql and pip install cryptography
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:mysql1234@localhost/our_users' # pip install pymsysql and pip install cryptography
 
+app.config['SQLALCHEMY_DATABASE_URI'] ='postgres://ufrlam7ksq0u44:p472be503258a48328a33137d4b459249c2d511dfcba7bd9d50f16da5c3bfc4ff@ceqbglof0h8enj.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d9prtiib132cih'
 
 # Secret Key
 app.config['SECRET_KEY'] = "super secret key"
@@ -529,7 +530,7 @@ class Users(db.Model, UserMixin):
     name = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     favorite_color = db.Column(db.String(120))
-    about_author = db.Column(db.Text(500), nullable=True) # Added About Author Section // Add TextAreaField // Made a changes in database need to make migration
+    about_author = db.Column(db.Text, nullable=True) #Text(500) # Added About Author Section // Add TextAreaField // Made a changes in database need to make migration
     profile_pic = db.Column(db.String(120), nullable=True)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     
