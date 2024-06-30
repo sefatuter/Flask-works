@@ -24,9 +24,9 @@ app = Flask(__name__)
 
 # MySql Database
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://username:password@localhost/db_name'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:mysql1234@localhost/our_users' # pip install pymsysql and pip install cryptography
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:mysql1234@localhost/our_users' # pip install pymsysql and pip install cryptography
 
-app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql://ufrlam7ksq0u44:p472be503258a48328a33137d4b459249c2d511dfcba7bd9d50f16da5c3bfc4ff@ceqbglof0h8enj.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d9prtiib132cih'
+# app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql://ufrlam7ksq0u44:p472be503258a48328a33137d4b459249c2d511dfcba7bd9d50f16da5c3bfc4ff@ceqbglof0h8enj.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d9prtiib132cih'
 
 # Secret Key
 app.config['SECRET_KEY'] = "super secret key"
@@ -324,28 +324,32 @@ with app.app_context():
 
 
 @app.route("/delete/<int:id>", methods=['GET', 'POST'])
+@login_required
 def delete(id):
-    name = None
-    form = UserForm()
-    user_to_delete = Users.query.get_or_404(id)
-   
-    try:
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        flash("User Deleted Successfully!")
-        
-        our_users = Users.query.order_by(Users.date_added)                
-        return render_template("add_user.html", 
-        form=form,
-        name=name,
-        our_users=our_users)
-    except:
-        flash("Whoops! There was a problem...")
-        return render_template("add_user.html", 
-        form=form,
-        name=name,
-        our_users=our_users)
-        
+    if id == current_user.id:
+        name = None
+        form = UserForm()
+        user_to_delete = Users.query.get_or_404(id)
+    
+        try:
+            db.session.delete(user_to_delete)
+            db.session.commit()
+            flash("User Deleted Successfully!")
+            
+            our_users = Users.query.order_by(Users.date_added)                
+            return render_template("add_user.html", 
+            form=form,
+            name=name,
+            our_users=our_users)
+        except:
+            flash("Whoops! There was a problem...")
+            return render_template("add_user.html", 
+            form=form,
+            name=name,
+            our_users=our_users)
+    else:
+        flash("Sorry You Can't Delete This User...", "danger")
+        return redirect(url_for('dashboard'))
         
     
 # Update Database Record
