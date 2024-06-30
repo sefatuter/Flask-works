@@ -47,15 +47,26 @@ get_flashed_messages() %}
             class="btn btn-outline-danger btn-sm"
             >Delete</a
           >
-          <br>
+          <br />
         </div>
         <div class="col-4">
+          {% if current_user.profile_pic %}
+          <img
+            src="{{ url_for('static', filename='images/' + current_user.profile_pic) }}"
+            alt=""
+            width="150"
+            align="right"
+          />
+
+          {% else %}
           <img
             src="{{ url_for('static', filename='images/def.jpg') }}"
             alt=""
             width="150"
             align="right"
           />
+
+          {% endif %}
         </div>
       </div>
     </div>
@@ -90,14 +101,16 @@ get_flashed_messages() %}
       <br />
 
       {{ form.profile_pic.label(class="form-label") }} {{
-        form.profile_pic(class="form-control",
-        value=name_to_update.profile_pic) }}
+      form.profile_pic(class="form-control", value=name_to_update.profile_pic)
+      }}
 
       <br />
 
       {{ form.about_author.label(class="form-label") }}
-        <textarea name="about_author" class="form-control">{{ name_to_update.about_author }}</textarea>
-        <br />
+      <textarea name="about_author" class="form-control">
+{{ name_to_update.about_author }}</textarea
+      >
+      <br />
       {{ form.submit( class="btn btn-secondary btn-sm") }}
     </form>
   </div>
