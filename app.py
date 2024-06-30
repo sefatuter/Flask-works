@@ -26,7 +26,7 @@ app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://username:password@localhost/db_name'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:mysql1234@localhost/our_users' # pip install pymsysql and pip install cryptography
 
-app.config['SQLALCHEMY_DATABASE_URI'] ='postgres://ufrlam7ksq0u44:p472be503258a48328a33137d4b459249c2d511dfcba7bd9d50f16da5c3bfc4ff@ceqbglof0h8enj.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d9prtiib132cih'
+app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql://ufrlam7ksq0u44:p472be503258a48328a33137d4b459249c2d511dfcba7bd9d50f16da5c3bfc4ff@ceqbglof0h8enj.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d9prtiib132cih'
 
 # Secret Key
 app.config['SECRET_KEY'] = "super secret key"
