@@ -53,7 +53,7 @@ migrate = Migrate(app, db)
 
 # after you created migration environment
 # to make changes use,
-# $ flask db migrate -m "message"
+# $     
 # $ flask db upgrade
 
 
